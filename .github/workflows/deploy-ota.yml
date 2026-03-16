@@ -1,0 +1,71 @@
+name: OTA Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      device_ip:
+        description: 'ESP8266 device IP address'
+        required: true
+        type: string
+      release_tag:
+        description: 'Release tag to deploy (e.g. v0.1.0). Leave blank for latest.'
+        required: false
+        type: string
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, lxd, ota]
+    env:
+      DEVICE_IP: ${{ inputs.device_ip }}
+      RELEASE_TAG: ${{ inputs.release_tag }}
+    steps:
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [ -n "$RELEASE_TAG" ]; then
+            echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+          else
+            TAG=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName)
+            echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download firmware from release
+        run: |
+          mkdir -p ./deploy
+          gh release download "${{ steps.tag.outputs.tag }}" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "firmware.bin" \
+            --dir ./deploy
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify firmware exists
+        run: |
+          ls -la ./deploy/firmware.bin
+          SIZE=$(stat -c%s ./deploy/firmware.bin)
+          echo "Firmware size: $((SIZE / 1024))KB"
+
+      - name: Deploy via OTA
+        run: |
+          echo "Deploying to ${DEVICE_IP}..."
+          espota.py -i "$DEVICE_IP" \
+            -p 8266 \
+            -f ./deploy/firmware.bin \
+            --progress
+        timeout-minutes: 5
+
+      - name: Verify device rebooted
+        run: |
+          echo "Waiting for device to reboot..."
+          sleep 10
+          for i in $(seq 1 12); do
+            if ping -c 1 -W 2 "$DEVICE_IP" > /dev/null 2>&1; then
+              echo "Device is back online at ${DEVICE_IP}"
+              exit 0
+            fi
+            echo "Waiting... (attempt $i/12)"
+            sleep 5
+          done
+          echo "::warning::Device did not respond to ping after 60 seconds"

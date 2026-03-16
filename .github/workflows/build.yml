@@ -1,0 +1,57 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main, 'phase/*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+
+      - name: Build firmware
+        run: pio run -e nodemcuv2
+
+      - name: Check firmware size
+        run: |
+          SIZE=$(stat -c%s .pio/build/nodemcuv2/firmware.bin)
+          SIZE_KB=$((SIZE / 1024))
+          echo "Firmware size: ${SIZE_KB}KB / 500KB"
+          if [ $SIZE -gt 512000 ]; then
+            echo "::error::Firmware exceeds 500KB OTA limit (${SIZE_KB}KB)"
+            exit 1
+          elif [ $SIZE -gt 460800 ]; then
+            echo "::warning::Firmware approaching 500KB OTA limit (${SIZE_KB}KB)"
+          fi
+
+      - name: Run native tests
+        run: pio test -e native -v
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: .pio/build/nodemcuv2/firmware.bin
+          retention-days: 30

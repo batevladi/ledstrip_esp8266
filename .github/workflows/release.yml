@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+
+      - name: Build firmware
+        run: pio run -e nodemcuv2
+
+      - name: Build LittleFS image
+        run: pio run -t buildfs -e nodemcuv2
+
+      - name: Run native tests
+        run: pio test -e native -v
+
+      - name: Get firmware size
+        id: size
+        run: |
+          SIZE=$(stat -c%s .pio/build/nodemcuv2/firmware.bin)
+          echo "size_kb=$((SIZE / 1024))" >> "$GITHUB_OUTPUT"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            .pio/build/nodemcuv2/firmware.bin
+            .pio/build/nodemcuv2/littlefs.bin
+          body: |
+            ## Firmware Release ${{ github.ref_name }}
+
+            | File | Purpose |
+            |---|---|
+            | firmware.bin | Main firmware (${{ steps.size.outputs.size_kb }}KB) |
+            | littlefs.bin | LittleFS filesystem image |
+
+            ### Flash via serial
+            ```
+            esptool.py --port /dev/ttyUSB0 write_flash 0x0 firmware.bin
+            ```
+
+            ### Flash via OTA
+            ```
+            espota.py -i <device-ip> -f firmware.bin
+            ```
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'rc') }}

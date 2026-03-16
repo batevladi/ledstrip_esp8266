@@ -77,7 +77,7 @@
 - Create: `src/config.h`
 - Create: `src/main.cpp` (minimal — verify build)
 
-- [ ] **Step 1: Create `platformio.ini`**
+- [x] **Step 1: Create `platformio.ini`**
 
 ```ini
 [env:nodemcuv2]
@@ -107,7 +107,7 @@ build_flags = -std=c++17
 test_framework = unity
 ```
 
-- [ ] **Step 2: Create `src/config.h`**
+- [x] **Step 2: Create `src/config.h`**
 
 ```cpp
 #ifndef CONFIG_H
@@ -159,7 +159,7 @@ const char* const PROGRAMME_NAMES[] = {
 #endif // CONFIG_H
 ```
 
-- [ ] **Step 3: Create minimal `src/main.cpp`**
+- [x] **Step 3: Create minimal `src/main.cpp`**
 
 ```cpp
 #include <Arduino.h>
@@ -177,13 +177,13 @@ void loop() {
 }
 ```
 
-- [ ] **Step 4: Verify the project builds**
+- [x] **Step 4: Verify the project builds**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS. This confirms PlatformIO downloads the ESP8266 platform, FastLED, and ArduinoJson correctly.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git init
@@ -199,7 +199,7 @@ git commit -m "feat: scaffold PlatformIO project with config constants"
 - Create: `src/config_manager.h`
 - Create: `src/config_manager.cpp`
 
-- [ ] **Step 1: Create `src/config_manager.h`**
+- [x] **Step 1: Create `src/config_manager.h`**
 
 ```cpp
 #ifndef CONFIG_MANAGER_H
@@ -266,7 +266,7 @@ private:
 #endif // CONFIG_MANAGER_H
 ```
 
-- [ ] **Step 2: Create `src/config_manager.cpp`**
+- [x] **Step 2: Create `src/config_manager.cpp`**
 
 ```cpp
 #include "config_manager.h"
@@ -442,13 +442,13 @@ const DeviceConfig& ConfigManager::config() const {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/config_manager.h src/config_manager.cpp
@@ -464,7 +464,7 @@ git commit -m "feat: add ConfigManager with LittleFS JSON persistence"
 
 These tests run on the host machine (no ESP8266 required) to verify JSON serialization logic.
 
-- [ ] **Step 1: Create `test/test_native/test_config_json.cpp`**
+- [x] **Step 1: Create `test/test_native/test_config_json.cpp`**
 
 ```cpp
 #include <unity.h>
@@ -599,13 +599,13 @@ int main(int argc, char** argv) {
 }
 ```
 
-- [ ] **Step 2: Run native tests**
+- [x] **Step 2: Run native tests**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio test -e native`
 
 Expected: All 5 tests PASS.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add test/test_native/test_config_json.cpp
@@ -622,7 +622,7 @@ git commit -m "test: add native tests for config JSON serialization"
 - Create: `src/strip_manager.h`
 - Create: `src/strip_manager.cpp`
 
-- [ ] **Step 1: Create `src/strip_manager.h`**
+- [x] **Step 1: Create `src/strip_manager.h`**
 
 ```cpp
 #ifndef STRIP_MANAGER_H
@@ -672,7 +672,7 @@ private:
 #endif // STRIP_MANAGER_H
 ```
 
-- [ ] **Step 2: Create `src/strip_manager.cpp`**
+- [x] **Step 2: Create `src/strip_manager.cpp`**
 
 ```cpp
 #include "strip_manager.h"
@@ -770,13 +770,13 @@ void StripManager::setBrightness(uint8_t stripIndex, uint8_t brightness) {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/strip_manager.h src/strip_manager.cpp
@@ -791,7 +791,7 @@ git commit -m "feat: add StripManager with FastLED pin dispatch for 1-5 strips"
 - Create: `src/programme_engine.h`
 - Create: `src/programme_engine.cpp`
 
-- [ ] **Step 1: Create `src/programme_engine.h`**
+- [x] **Step 1: Create `src/programme_engine.h`**
 
 ```cpp
 #ifndef PROGRAMME_ENGINE_H
@@ -855,7 +855,7 @@ private:
 #endif // PROGRAMME_ENGINE_H
 ```
 
-- [ ] **Step 2: Create `src/programme_engine.cpp`**
+- [x] **Step 2: Create `src/programme_engine.cpp`**
 
 ```cpp
 #include "programme_engine.h"
@@ -927,13 +927,13 @@ void ProgrammeEngine::resetTimer() {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/programme_engine.h src/programme_engine.cpp
@@ -950,7 +950,7 @@ git commit -m "feat: add ProgrammeEngine with abstract Programme base class and 
 - Create: `src/programmes/sunset.h`
 - Create: `src/programmes/sunset.cpp`
 
-- [ ] **Step 1: Create `src/programmes/sunset.h`**
+- [x] **Step 1: Create `src/programmes/sunset.h`**
 
 ```cpp
 #ifndef PROGRAMME_SUNSET_H
@@ -967,7 +967,7 @@ public:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/programmes/sunset.cpp`**
+- [x] **Step 2: Create `src/programmes/sunset.cpp`**
 
 ```cpp
 #include "sunset.h"
@@ -1001,13 +1001,13 @@ void SunsetProgramme::render(CRGB* leds, uint16_t numLeds, uint32_t elapsedMs) {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS. Note: `blend` is both a variable name and a FastLED function. If there's a naming collision, rename the variable to `blendAmount` in both the declaration and the function call.
 
-- [ ] **Step 4: Fix naming collision if needed**
+- [x] **Step 4: Fix naming collision if needed**
 
 If the build fails due to `blend` shadowing the FastLED `blend()` function, update `sunset.cpp`:
 
@@ -1016,7 +1016,7 @@ If the build fails due to `blend` shadowing the FastLED `blend()` function, upda
     CRGB colour = blend(SUNSET_COLOURS[colourIndex], SUNSET_COLOURS[nextIndex], blendAmount);
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/programmes/sunset.h src/programmes/sunset.cpp
@@ -1031,7 +1031,7 @@ git commit -m "feat: add Sunset programme — warm colour fade cycle"
 - Create: `src/programmes/rainbow.h`
 - Create: `src/programmes/rainbow.cpp`
 
-- [ ] **Step 1: Create `src/programmes/rainbow.h`**
+- [x] **Step 1: Create `src/programmes/rainbow.h`**
 
 ```cpp
 #ifndef PROGRAMME_RAINBOW_H
@@ -1048,7 +1048,7 @@ public:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/programmes/rainbow.cpp`**
+- [x] **Step 2: Create `src/programmes/rainbow.cpp`**
 
 ```cpp
 #include "rainbow.h"
@@ -1067,13 +1067,13 @@ void RainbowProgramme::render(CRGB* leds, uint16_t numLeds, uint32_t elapsedMs) 
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/programmes/rainbow.h src/programmes/rainbow.cpp
@@ -1088,7 +1088,7 @@ git commit -m "feat: add Running Rainbow programme — scrolling hue cycle"
 - Create: `src/programmes/nightlight.h`
 - Create: `src/programmes/nightlight.cpp`
 
-- [ ] **Step 1: Create `src/programmes/nightlight.h`**
+- [x] **Step 1: Create `src/programmes/nightlight.h`**
 
 ```cpp
 #ifndef PROGRAMME_NIGHTLIGHT_H
@@ -1105,7 +1105,7 @@ public:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/programmes/nightlight.cpp`**
+- [x] **Step 2: Create `src/programmes/nightlight.cpp`**
 
 ```cpp
 #include "nightlight.h"
@@ -1135,13 +1135,13 @@ void NightlightProgramme::render(CRGB* leds, uint16_t numLeds, uint32_t elapsedM
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/programmes/nightlight.h src/programmes/nightlight.cpp
@@ -1156,7 +1156,7 @@ git commit -m "feat: add Nightlight programme — warm breathing glow"
 - Create: `src/programmes/sky_at_night.h`
 - Create: `src/programmes/sky_at_night.cpp`
 
-- [ ] **Step 1: Create `src/programmes/sky_at_night.h`**
+- [x] **Step 1: Create `src/programmes/sky_at_night.h`**
 
 ```cpp
 #ifndef PROGRAMME_SKY_AT_NIGHT_H
@@ -1193,7 +1193,7 @@ private:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/programmes/sky_at_night.cpp`**
+- [x] **Step 2: Create `src/programmes/sky_at_night.cpp`**
 
 ```cpp
 #include "sky_at_night.h"
@@ -1293,13 +1293,13 @@ void SkyAtNightProgramme::render(CRGB* leds, uint16_t numLeds, uint32_t elapsedM
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/programmes/sky_at_night.h src/programmes/sky_at_night.cpp
@@ -1313,7 +1313,7 @@ git commit -m "feat: add Sky at Night programme — twinkling stars on dark blue
 **Files:**
 - Create: `test/test_native/test_programme_math.cpp`
 
-- [ ] **Step 1: Create `test/test_native/test_programme_math.cpp`**
+- [x] **Step 1: Create `test/test_native/test_programme_math.cpp`**
 
 Test the colour interpolation and timing math used by programmes. These tests verify the mathematical logic without FastLED dependencies.
 
@@ -1440,13 +1440,13 @@ int main(int argc, char** argv) {
 }
 ```
 
-- [ ] **Step 2: Run native tests**
+- [x] **Step 2: Run native tests**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio test -e native`
 
 Expected: All 6 tests PASS (plus the 5 from Task 3 = 11 total).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add test/test_native/test_programme_math.cpp
@@ -1463,7 +1463,7 @@ git commit -m "test: add native tests for programme colour and timing math"
 - Create: `src/wifi_manager.h`
 - Create: `src/wifi_manager.cpp`
 
-- [ ] **Step 1: Create `src/wifi_manager.h`**
+- [x] **Step 1: Create `src/wifi_manager.h`**
 
 ```cpp
 #ifndef WIFI_MANAGER_H
@@ -1513,7 +1513,7 @@ private:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/wifi_manager.cpp`**
+- [x] **Step 2: Create `src/wifi_manager.cpp`**
 
 ```cpp
 #include "wifi_manager.h"
@@ -1592,13 +1592,13 @@ void WifiManager::stopAP() {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/wifi_manager.h src/wifi_manager.cpp
@@ -1612,7 +1612,7 @@ git commit -m "feat: add WifiManager with STA connect, AP mode, and timeout"
 **Files:**
 - Create: `src/web_portal_html.h`
 
-- [ ] **Step 1: Create `src/web_portal_html.h`**
+- [x] **Step 1: Create `src/web_portal_html.h`**
 
 HTML stored in PROGMEM to keep it out of RAM. The page provides: status display, Wi-Fi/MQTT config form, strip configuration, and 4 programme buttons.
 
@@ -1721,13 +1721,13 @@ const char HTML_STRIP_BLOCK[] PROGMEM = R"rawliteral(
 #endif
 ```
 
-- [ ] **Step 2: Verify build compiles**
+- [x] **Step 2: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/web_portal_html.h
@@ -1742,7 +1742,7 @@ git commit -m "feat: add PROGMEM HTML templates for captive portal web UI"
 - Create: `src/web_portal.h`
 - Create: `src/web_portal.cpp`
 
-- [ ] **Step 1: Create `src/web_portal.h`**
+- [x] **Step 1: Create `src/web_portal.h`**
 
 ```cpp
 #ifndef WEB_PORTAL_H
@@ -1792,7 +1792,7 @@ private:
 #endif
 ```
 
-- [ ] **Step 2: Create `src/web_portal.cpp`**
+- [x] **Step 2: Create `src/web_portal.cpp`**
 
 ```cpp
 #include "web_portal.h"
@@ -1984,13 +1984,13 @@ String WebPortal::buildPage() {
 }
 ```
 
-- [ ] **Step 3: Verify build compiles**
+- [x] **Step 3: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/web_portal.h src/web_portal.cpp
@@ -2004,7 +2004,7 @@ git commit -m "feat: add captive portal web server with config forms and program
 **Files:**
 - Modify: `src/main.cpp` (complete rewrite)
 
-- [ ] **Step 1: Rewrite `src/main.cpp`**
+- [x] **Step 1: Rewrite `src/main.cpp`**
 
 ```cpp
 #include <Arduino.h>
@@ -2107,13 +2107,13 @@ void loop() {
 }
 ```
 
-- [ ] **Step 2: Verify build compiles**
+- [x] **Step 2: Verify build compiles**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/main.cpp
@@ -2255,13 +2255,13 @@ git commit -m "fix: multi-strip adjustments from hardware testing"
 
 **Files:** None
 
-- [ ] **Step 1: Run the full native test suite**
+- [x] **Step 1: Run the full native test suite**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio test -e native`
 
 Expected: All 11 tests PASS (5 config JSON + 6 programme math).
 
-- [ ] **Step 2: Run a full firmware build**
+- [x] **Step 2: Run a full firmware build**
 
 Run: `cd /home/vmgc/Projects/prog-chain/8266 && pio run -e nodemcuv2`
 

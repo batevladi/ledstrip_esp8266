@@ -20,7 +20,7 @@ void test_default_config_serializes_correctly() {
 
     JsonDocument doc2;
     DeserializationError err = deserializeJson(doc2, buffer);
-    TEST_ASSERT_EQUAL(DeserializationError::Ok, err);
+    TEST_ASSERT_TRUE(err == DeserializationError::Ok);
     TEST_ASSERT_EQUAL(1, doc2["num_strips"].as<int>());
     TEST_ASSERT_EQUAL(0, doc2["active_programme"].as<int>());
     TEST_ASSERT_EQUAL(5, doc2["strips"][0]["pin"].as<int>());
@@ -33,7 +33,7 @@ void test_missing_fields_get_defaults() {
     const char* minimal = "{\"num_strips\":2}";
     JsonDocument doc;
     DeserializationError err = deserializeJson(doc, minimal);
-    TEST_ASSERT_EQUAL(DeserializationError::Ok, err);
+    TEST_ASSERT_TRUE(err == DeserializationError::Ok);
 
     uint8_t prog = doc["active_programme"] | (uint8_t)0;
     TEST_ASSERT_EQUAL(0, prog);

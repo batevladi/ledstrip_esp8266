@@ -1,0 +1,70 @@
+# ledstrip_esp8266: every push, every branch. Lives at .forgejo/workflows/checks.yml.
+# Mirrors .github/workflows/build.yml only: build nodemcuv2, gate on the 500 KB
+# OTA size limit, run the native tests, keep firmware.bin as an artifact.
+# Deliberately NOT mirrored: deploy-ota.yml (flashes devices on the LAN) and
+# release.yml (publishes GitHub releases).
+# Differences from build.yml: PlatformIO goes in a venv on the image's Python
+# 3.12 instead of setup-python; no actions/cache (Forgejo's runner reports it
+# unsupported); upload-artifact@v3 because v4 does not work with Forgejo's
+# artifact server.
+#
+# TODO: main has no firmware sources yet (platformio.ini, src/, test/ exist only
+# on phase/1, PR #1), so on main every step after "Detect firmware sources" is
+# skipped with a notice. Once phase/1 is merged the full build runs everywhere;
+# then the guard can go.
+name: checks
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: linux
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Detect firmware sources
+        id: src
+        run: |
+          if [ -f platformio.ini ]; then echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::no platformio.ini on this ref (main before phase/1 merge) - build and tests skipped"
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install PlatformIO
+        if: steps.src.outputs.present == 'true'
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --upgrade platformio
+          echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+
+      - name: Build firmware
+        if: steps.src.outputs.present == 'true'
+        run: pio run -e nodemcuv2
+
+      - name: Check firmware size
+        if: steps.src.outputs.present == 'true'
+        run: |
+          SIZE=$(stat -c%s .pio/build/nodemcuv2/firmware.bin)
+          SIZE_KB=$((SIZE / 1024))
+          echo "Firmware size: ${SIZE_KB}KB / 500KB"
+          if [ $SIZE -gt 512000 ]; then
+            echo "::error::Firmware exceeds 500KB OTA limit (${SIZE_KB}KB)"
+            exit 1
+          elif [ $SIZE -gt 460800 ]; then
+            echo "::warning::Firmware approaching 500KB OTA limit (${SIZE_KB}KB)"
+          fi
+
+      - name: Run native tests
+        if: steps.src.outputs.present == 'true'
+        run: pio test -e native -v
+
+      - name: Upload firmware artifact
+        if: steps.src.outputs.present == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware
+          path: .pio/build/nodemcuv2/firmware.bin
+          retention-days: 30

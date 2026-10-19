@@ -1,0 +1,62 @@
+# ledstrip_esp8266: every push, every branch. Lives at .forgejo/workflows/checks.yml.
+# Mirrors .github/workflows/build.yml only: build nodemcuv2, gate on the 500 KB
+# OTA size limit, run the native tests, keep firmware.bin as an artifact.
+# Deliberately NOT mirrored: deploy-ota.yml (flashes devices on the LAN) and
+# release.yml (publishes GitHub releases).
+# Differences from build.yml: PlatformIO goes in a venv on the image's Python
+# 3.12 instead of setup-python; upload-artifact@v3 because v4 does not work
+# with Forgejo's artifact server.
+name: checks
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: linux
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+            ~/.platformio/platforms
+            ~/.platformio/packages
+          key: ${{ runner.os }}-pio-${{ hashFiles('platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      - name: Install PlatformIO
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install --upgrade platformio
+          echo "$RUNNER_TEMP/venv/bin" >> "$GITHUB_PATH"
+
+      - name: Build firmware
+        run: pio run -e nodemcuv2
+
+      - name: Check firmware size
+        run: |
+          SIZE=$(stat -c%s .pio/build/nodemcuv2/firmware.bin)
+          SIZE_KB=$((SIZE / 1024))
+          echo "Firmware size: ${SIZE_KB}KB / 500KB"
+          if [ $SIZE -gt 512000 ]; then
+            echo "::error::Firmware exceeds 500KB OTA limit (${SIZE_KB}KB)"
+            exit 1
+          elif [ $SIZE -gt 460800 ]; then
+            echo "::warning::Firmware approaching 500KB OTA limit (${SIZE_KB}KB)"
+          fi
+
+      - name: Run native tests
+        run: pio test -e native -v
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: firmware
+          path: .pio/build/nodemcuv2/firmware.bin
+          retention-days: 30

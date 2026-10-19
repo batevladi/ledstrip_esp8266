@@ -73,6 +73,8 @@ lxc config device add esp8266-build ttyUSB0 unix-char path=/dev/ttyUSB0
 
 GitHub Actions with a self-hosted runner inside LXD. See `docs/ci-cd.md` for full setup.
 
+Checks run on Forgejo ci001 (`.forgejo/workflows/checks.yml`): build + size gate + native tests, mirroring build.yml.
+
 - **On push/PR**: Build firmware + run native tests
 - **On tag `v*`**: Build, create GitHub Release, attach firmware binary
 - **OTA deploy**: Self-hosted runner on local network pushes firmware to devices

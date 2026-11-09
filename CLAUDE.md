@@ -1,5 +1,15 @@
 # ESP8266 LED Strip Controller
 
+## Autonomy
+Canonical rule: `~/.claude/CLAUDE.md` "Autonomous to integration, gated to production".
+- Integration branch: `main`; merging it deploys: nothing (see the OTA note below).
+- Production: flashing or OTA-updating a device, always asked.
+- CI: `.forgejo/workflows/checks.yml` on every push: `pio run -e nodemcuv2`, a 500 KB size gate, `pio test -e native -v`. By hand: the same build and test commands. PR host: Forgejo (`origin`; push with `git push -u origin <branch>`, open with `fj pr create --base main`). Onboarded Forgejo-first 2026-11-09: `main` takes no direct pushes and merges only by PR with `checks / build (push)` green, and Forgejo push-mirrors `main` and tags to GitHub (`github` remote, fetch-only).
+- Exceptions:
+  - OTA deploy (`.github/workflows/deploy-ota.yml`) is `workflow_dispatch` only on GitHub, with a device IP input; a merge never triggers it. Any OTA push or USB flash is always asked.
+  - Creating or pushing a `v*` tag is a release, always asked: Forgejo mirrors tags to GitHub, where `.github/workflows/release.yml` builds and publishes the GitHub Release that OTA flashes.
+  - `main` carries no firmware sources until `phase/1` merges (the checks skip the build and tests there), so a green check on `main` proves nothing about firmware: code PRs into `main` stay asked and docs-only PRs follow the rule.
+
 ## Quick Reference
 
 | Command | Purpose |

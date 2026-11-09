@@ -4,11 +4,10 @@
 Canonical rule: `~/.claude/CLAUDE.md` "Autonomous to integration, gated to production".
 - Integration branch: `main`; merging it deploys: nothing (see the OTA note below).
 - Production: flashing or OTA-updating a device, always asked.
-- CI: `.forgejo/workflows/checks.yml` on every push: `pio run -e nodemcuv2`, a 500 KB size gate, `pio test -e native -v`. By hand: the same build and test commands. PR host: Forgejo, via the `forgejo` remote only (`git push -u forgejo <branch>`; `origin` also pushes to GitHub, so never `git push origin`). `fj` reads `origin` and stops because it is GitHub, so prefix every `fj` call (`create`, `checks`, `comment`, `merge`) with this override: `GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0=url.git@192.168.1.31:batevladi/ledstrip_esp8266.git.insteadOf GIT_CONFIG_VALUE_0=git@github.com:batevladi/ledstrip_esp8266.git fj pr create --base main`.
+- CI: `.forgejo/workflows/checks.yml` on every push: `pio run -e nodemcuv2`, a 500 KB size gate, `pio test -e native -v`. By hand: the same build and test commands. PR host: Forgejo (`origin`; push with `git push -u origin <branch>`, open with `fj pr create --base main`). Onboarded Forgejo-first 2026-11-09: `main` takes no direct pushes and merges only by PR with `checks / build (push)` green, and Forgejo push-mirrors `main` and tags to GitHub (`github` remote, fetch-only).
 - Exceptions:
   - OTA deploy (`.github/workflows/deploy-ota.yml`) is `workflow_dispatch` only on GitHub, with a device IP input; a merge never triggers it. Any OTA push or USB flash is always asked.
-  - Merges into `main` stay asked until the repo is onboarded Forgejo-first (`ci-platform/release-gate/setup-repo.sh`, run by the user): until then nothing carries a Forgejo merge to GitHub `main`, where `release.yml` builds `v*` tags, and pushing `main` to GitHub by hand is not allowed.
-  - `main` carries no firmware sources until `phase/1` merges (the checks skip the build and tests there), so a green check on `main` proves nothing about firmware: once the repo is onboarded, code PRs into `main` stay asked and docs-only PRs follow the rule.
+  - `main` carries no firmware sources until `phase/1` merges (the checks skip the build and tests there), so a green check on `main` proves nothing about firmware: code PRs into `main` stay asked and docs-only PRs follow the rule.
 
 ## Quick Reference
 
